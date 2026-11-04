@@ -1,8 +1,10 @@
 .venv/
 __pycache__/
 *.pyc
+*.egg-info/
+.pytest_cache/
 mlruns/
-data/
+/data/
 *.ckpt
 *.pt
 .ipynb_checkpoints/
