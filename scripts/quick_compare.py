@@ -3,10 +3,11 @@ from mlbench.metrics import compute_metrics
 from mlbench.models.logreg import TorchLogReg
 from mlbench.models.mlp import TorchMLP
 from mlbench.seed import set_seed
+from mlbench.models.xgb import XGBModel
 
 # note to self: quick sanity script, not part of the final framework
 d = load_adult()
-for Model in (TorchLogReg, TorchMLP):
+for Model in (TorchLogReg, TorchMLP, XGBModel):
     set_seed(0)
     m = Model(seed=0)
     info = m.fit(d.X_train, d.y_train, d.X_val, d.y_val)
