@@ -8,3 +8,5 @@ mlruns/
 *.ckpt
 *.pt
 .ipynb_checkpoints/
+*.db
+mlartifacts/
