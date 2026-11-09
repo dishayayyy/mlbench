@@ -1,0 +1,4 @@
+size,csv_gb,parquet_gb,read_csv_s,read_parquet_s
+1m,0.73,0.06,16.4,1.1
+5m,3.65,0.31,72.0,3.0
+11m,8.04,0.69,157.4,6.6
