@@ -5,6 +5,7 @@ import pandas as pd
 
 from mlbench.stats.bootstrap import bootstrap_ci
 from mlbench.stats.rows import bootstrap_auc_rows
+from pathlib import Path
 
 MODELS = ["logreg", "mlp", "xgb"]
 
@@ -43,6 +44,14 @@ def main():
     for (a, b), (point, lo, hi) in diffs.items():
         excludes = lo > 0 or hi < 0
         print(f"{a} - {b}: {point:+.4f} [{lo:+.4f}, {hi:+.4f}]  excludes zero: {excludes}")
+
+        # note to self: saved so make_report.py can build tables without rerunning this slow bootstrap
+    pd.DataFrame([{"model": m, "point_seed0": p, "row_lo": lo, "row_hi": hi, "n_boot": args.n_boot}
+                  for m, (p, lo, hi) in per_model.items()]
+                 ).to_csv(Path("results") / f"rowci_{args.dataset}_{args.device}.csv", index=False)
+    pd.DataFrame([{"a": a, "b": b, "diff_seed0": p, "lo": lo, "hi": hi, "n_boot": args.n_boot}
+                  for (a, b), (p, lo, hi) in diffs.items()]
+                 ).to_csv(Path("results") / f"rowdiff_{args.dataset}_{args.device}.csv", index=False)
 
     print(f"\nnote: row CI uses seed 0 predictions and {args.n_boot} resamples of {len(y_ref)} test rows")
 
