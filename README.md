@@ -105,13 +105,14 @@ Pipeline: read the raw HIGGS CSV, drop nulls, standardize the 28 features, cast 
 
 Python 3.12 was used. On Windows (PowerShell):
 
+A CPU build of PyTorch is enough, because all reported timings are CPU only.
+
 ```powershell
 git clone https://github.com/dishayayyy/mlbench.git
 cd mlbench
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install -e .
-pip install pytest matplotlib
+pip install -e ".[dev]"
 pytest -q
 ```
 
@@ -145,7 +146,7 @@ python scripts/make_report.py
 
 Browse tracked runs with `mlflow ui --backend-store-uri sqlite:///mlflow.db` (run it in a second terminal).
 
-The Pandas vs Spark benchmark runs on Colab. Open `notebooks/colab_spark_benchmark.ipynb` there and run all cells; the raw results are in `results/spark_vs_pandas.csv` and `results/csv_vs_parquet.csv`.
+The Pandas vs Spark benchmark runs on Colab. Open `notebooks/colab_spark_benchmark.ipynb` there and run all cells; the raw results are in `results/spark_vs_pandas.csv` and `results/csv_vs_parquet.csv`. 
 
 ## Repository layout
 
