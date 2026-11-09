@@ -22,7 +22,8 @@ def _git_commit() -> str:
     try:
         sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"],
                              capture_output=True, text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain"],
+        # note to self: results/ is committed output, not code, so changes there must not flip the tag to -dirty
+        dirty = subprocess.run(["git", "status", "--porcelain", "--", ".", ":(exclude)results"],
                                capture_output=True, text=True, check=True).stdout.strip()
         return sha + ("-dirty" if dirty else "")
     except Exception:
