@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 
 from mlbench.stats.bootstrap import bootstrap_ci
+from matplotlib.ticker import FuncFormatter, NullFormatter
 
 RES = Path("results")
 TAB = RES / "tables"
@@ -61,26 +62,31 @@ def spark_tables():
 
 
 def plot_accuracy(acc):
-    fig, axes = plt.subplots(1, 2, figsize=(8, 3.2))
-    for ax, ds in zip(axes, DATASETS):
-        sub = acc[acc["dataset"] == ds].set_index("model").loc[MODELS]
-        x = np.arange(len(MODELS))
+    # note to self: third panel zooms in on mlp vs xgb on higgs, otherwise the logreg gap squashes them flat
+    panels = [("adult", MODELS, "adult"), ("higgs", MODELS, "higgs"),
+              ("higgs", ["mlp", "xgb"], "higgs (zoom: mlp vs xgb)")]
+    fig, axes = plt.subplots(1, 3, figsize=(11, 3.2))
+    for ax, (ds, models, title) in zip(axes, panels):
+        sub = acc[acc["dataset"] == ds].set_index("model").loc[models]
+        x = np.arange(len(models))
         ax.errorbar(x, sub["auc_mean"], yerr=sub["auc_row_halfwidth"], fmt="o", capsize=4,
                     label="seed mean, bar = test-row 95% CI")
-        for i, m in enumerate(MODELS):
+        for i, m in enumerate(models):
             vals = pd.read_csv(RES / f"{ds}_{m}_cpu.csv")["auc"]
-            ax.scatter(np.full(len(vals), i) + 0.15, vals, s=8, alpha=0.6,
-                       color="gray", label="single seeds" if i == 0 else None)
+            ax.scatter(np.full(len(vals), i) + 0.1, vals, s=8, alpha=0.6, color="gray",
+                       label="single seeds" if i == 0 else None)
         ax.set_xticks(x)
-        ax.set_xticklabels(MODELS)
-        ax.set_title(ds)
+        ax.set_xticklabels(models)
+        ax.set_xlim(-0.5, len(models) - 0.5)
+        ax.set_title(title, fontsize=9)
         ax.set_ylabel("test AUC")
-        ax.legend(fontsize=6)
+    axes[0].legend(fontsize=6, loc="upper left")
     fig.tight_layout()
     return fig
 
 
 def plot_cost_accuracy(acc, cost):
+    ticks = {"adult": [1, 2, 4, 8], "higgs": [20, 40, 80, 160, 320]}
     fig, axes = plt.subplots(1, 2, figsize=(8, 3.2))
     for ax, ds in zip(axes, DATASETS):
         for m in MODELS:
@@ -90,6 +96,10 @@ def plot_cost_accuracy(acc, cost):
             ax.annotate(m, (c["train_s_mean"], a["auc_mean"]), textcoords="offset points",
                         xytext=(5, 4), fontsize=8)
         ax.set_xscale("log")
+        # note to self: explicit ticks and no minor labels, the default log labels overlapped each other
+        ax.set_xticks(ticks[ds])
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.xaxis.set_minor_formatter(NullFormatter())
         ax.set_xlabel("training time (s, CPU, log scale)")
         ax.set_ylabel("test AUC")
         ax.set_title(ds)
