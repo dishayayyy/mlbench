@@ -11,14 +11,16 @@ from mlbench.data.adult import load_adult
 from mlbench.metrics import compute_metrics
 from mlbench.models.factory import build_model
 from mlbench.seed import set_seed
+from mlbench.data.higgs import load_higgs
 
 RESULTS_DIR = Path("results")
 
 
 def load_data(cfg):
-    # note to self: higgs gets added here tomorrow
     if cfg.dataset == "adult":
         return load_adult(**cfg.data)
+    if cfg.dataset == "higgs":
+        return load_higgs(**cfg.data)
     raise NotImplementedError(f"dataset '{cfg.dataset}' not wired up yet")
 
 

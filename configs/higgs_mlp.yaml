@@ -1,0 +1,24 @@
+name: higgs_mlp
+dataset: higgs
+model: mlp
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+device: cpu
+deterministic: true
+
+data:
+  split_seed: 123
+  test_size: 0.2
+  val_size: 0.1
+  n_sample: 1000000
+  sample_seed: 2024
+
+model_params:
+  hidden_dims: [128, 64]
+  dropout: 0.1
+
+train:
+  epochs: 50
+  batch_size: 256
+  lr: 0.01
+  weight_decay: 0.0
+  patience: 5

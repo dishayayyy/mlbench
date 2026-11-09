@@ -1,0 +1,23 @@
+name: higgs_xgb
+dataset: higgs
+model: xgboost
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+device: cpu
+deterministic: true
+
+data:
+  split_seed: 123
+  test_size: 0.2
+  val_size: 0.1
+  n_sample: 1000000
+  sample_seed: 2024
+
+model_params:
+  n_estimators: 500
+  max_depth: 6
+  learning_rate: 0.1
+  subsample: 0.8
+  colsample_bytree: 0.8
+  early_stopping_rounds: 20
+
+train: {}
